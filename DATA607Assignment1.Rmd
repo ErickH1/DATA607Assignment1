@@ -34,7 +34,7 @@ to extend, verify, or update the work from the selected article.
 6. You’re of course welcome—but not required--to include additional information, such as exploratory data
 analysis graphics (which we will cover later in the course).
 7. Place your solution into a single R Markdown (.Rmd) file and publish your solution out to rpubs.com.
-8. Post the .Rmd file in your GitHub repository, and provide the appropriate URLs to your GitHub repositor y
+8. Post the .Rmd file in your GitHub repository, and provide the appropriate URLs to your GitHub repository
 and your rpubs.com file in your assignment link.
 
 # Overview
@@ -44,20 +44,21 @@ Article: https://fivethirtyeight.com/features/aging-congress-boomers/
 Datasource: https://data.fivethirtyeight.com/
 
 ## Data Preparation
-```{r install-todyverse-dplyr}
+```{r install-tidyverse-dplyr}
 library(tidyverse)
 library(dplyr)
-
 ```
 
 ```{r data-preparation}
 congress_age_data <- read.csv('https://raw.githubusercontent.com/ErickH1/DATA607Assignment1/main/congress-demographics/data_aging_congress.csv')
 ```
-Subsetting dataframe without extra information
+
+Subsetting dataframe without extra information and rounding the age_years to the nearest whole
 ```{r subset-data}
 congress_age_subset <- subset(congress_age_data, congress == "118", select = c('chamber','party_code','age_years','generation'))
 congress_age_subset$age_years <- round(congress_age_subset$age_years, digits = 0)
 ```
+
 Subsetting based on position
 ```{r subset-data-house-senate}
 congress_age_house <- subset(congress_age_subset, chamber == "House", select = c('chamber','party_code','age_years','generation'))
@@ -65,8 +66,9 @@ congress_age_subset$age_years <- round(congress_age_subset$age_years, digits = 0
 congress_age_senate <- subset(congress_age_subset, chamber == "Senate", select = c('chamber','party_code','age_years','generation'))
 congress_age_subset$age_years <- round(congress_age_subset$age_years, digits = 0)
 ```
+
 Subsetting based on party
-```{r subset-data-house-senate}
+```{r subset-data-dem-rep-ind}
 congress_age_dem <- subset(congress_age_subset, party_code == "100", select = c('chamber','party_code','age_years','generation'))
 congress_age_subset$age_years <- round(congress_age_subset$age_years, digits = 0)
 congress_age_rep <- subset(congress_age_subset, party_code == "200", select = c('chamber','party_code','age_years','generation'))
@@ -74,38 +76,63 @@ congress_age_subset$age_years <- round(congress_age_subset$age_years, digits = 0
 congress_age_ind <- subset(congress_age_subset, party_code == "328", select = c('chamber','party_code','age_years','generation'))
 congress_age_subset$age_years <- round(congress_age_subset$age_years, digits = 0)
 ```
+
 ## Summarize the Data
+Summary of the dataset
 ```{r summarize-data}
 glimpse(congress_age_subset)
 ```
+Summary of the dataset mean age is 59 years
 ```{r summarize-data-subset}
 summary(congress_age_subset)
 ```
+Summary of subset based on party 
 ```{r summarize-data-dem-rep-ind}
 summary(congress_age_dem)
 summary(congress_age_rep)
 summary(congress_age_ind)
 ```
+Summary of subset based in position
 ```{r summarize-data-house-senate}
 summary(congress_age_house)
 summary(congress_age_senate)
 ```
 
 ## Data Visualiztion
+In this section graphs will visualize the distribution of ages throughout the subsets.
+Graph of the Generation
 ```{r graph-generation-v-count}
 ggplot(data = congress_age_subset, aes(x = generation)) + 
   geom_bar()
 ```
-```{r graph-generation-v-count}
+Graph of the Age distribution
+```{r graph-age-v-count}
 ggplot(data = congress_age_subset, aes(x = age_years)) + 
   geom_bar()
 ```
+Graph of the Age distribution based on House
 ```{r graph-house}
 ggplot(data = congress_age_house, aes(x = age_years)) + 
   geom_bar()
 ```
+Graph of the Age distribution based on Senate
 ```{r graph-senate}
 ggplot(data = congress_age_senate, aes(x = age_years)) + 
+  geom_bar()
+```
+Graph of the Age distribution based on Democrat
+```{r graph-dem}
+ggplot(data = congress_age_dem, aes(x = age_years)) + 
+  geom_bar()
+```
+Graph of the Age distribution based on Republican
+```{r graph-rep}
+ggplot(data = congress_age_rep, aes(x = age_years)) + 
+  geom_bar()
+```
+Graph of the Age distribution based on Independent
+```{r graph-ind}
+ggplot(data = congress_age_ind, aes(x = age_years)) + 
   geom_bar()
 ```
 # Findings and Recommendations
