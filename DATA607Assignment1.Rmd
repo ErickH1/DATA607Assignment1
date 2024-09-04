@@ -7,23 +7,109 @@ date: "2024-09-04"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+# Assignment – Loading Data into a Data Frame
+We are often tasked with taking data in one form and transforming it for easier downstream analysis. We will
+spend several weeks in this course on tidying and transformation operations. Some of this work could be done in
+SQL or R (or Python or…). Here, you are asked to use R—you may use any base functions or packages as you like.
+Your task is to first choose one of the provided datasets on fivethirtyeight.com that you find interesting:
+https://data.fivethirtyeight.com/
+You should first study the data and any other information on the GitHub site, and read the associated
+fivethirtyeight.com article.
+To receive full credit, you should:
+1. Take the data, and create one or more code blocks. You should finish with a data frame that contains a
+subset of the columns in your selected dataset. If there is an obvious target (aka predictor or independent)
+variable, you should include this in your set of columns. You should include (or add if necessary)
+meaningful column names and replace (if necessary) any non-intuitive abbreviations used in the data that
+you selected. For example, if you had instead been tasked with working with the UCI mushroom dataset,
+you would include the target column for edible or poisonous, and transform “e” values to “edible.” Your
+deliverable is the R code to perform these transformation tasks.
+2. Make sure that the original data file is accessible through your code—for example, stored in a GitHub
+repository or AWS S3 bucket and referenced in your code. If the code references data on your local
+machine, then your work is not reproducible!
+3. Start your R Markdown document with a two to three sentence “Overview” or “Introduction” description of
+what the article that you chose is about, and include a link to the article.
+4. Finish with a “Conclusions” or “Findings and Recommendations” text block that includes what you might do
+to extend, verify, or update the work from the selected article.
+5. Each of your text blocks should minimally include at least one header, and additional non-header text.
+6. You’re of course welcome—but not required--to include additional information, such as exploratory data
+analysis graphics (which we will cover later in the course).
+7. Place your solution into a single R Markdown (.Rmd) file and publish your solution out to rpubs.com.
+8. Post the .Rmd file in your GitHub repository, and provide the appropriate URLs to your GitHub repositor y
+and your rpubs.com file in your assignment link.
 
-## R Markdown
+# Overview
+The article "Congress Today Is Older Than It's Ever Been" by Geoffrey Skelley explores the significant aging trend within Congress, noting that it is currently older than ever before, with a median age of 59 years for the 118th Congress. The median age of senators is 65, and representatives stand at 58. The shift towards an older Congress affects policy attention, potentially sidelining younger concerns like climate change and affordable housing. Historical data shows a rising median age over the decades, influenced by longer life expectancies and political factors. However, as baby boomers eventually retire, there may be a gradual shift in Congress’s age composition with increased representation from younger generations like Gen X, millennials, and Gen Z, potentially leading to a more balanced legislative focus.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Article: https://fivethirtyeight.com/features/aging-congress-boomers/
+Datasource: https://data.fivethirtyeight.com/
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Data Preparation
+```{r install-todyverse-dplyr}
+library(tidyverse)
+library(dplyr)
 
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r data-preparation}
+congress_age_data <- read.csv('https://raw.githubusercontent.com/ErickH1/DATA607Assignment1/main/congress-demographics/data_aging_congress.csv')
+```
+Subsetting dataframe without extra information
+```{r subset-data}
+congress_age_subset <- subset(congress_age_data, congress == "118", select = c('chamber','party_code','age_years','generation'))
+congress_age_subset$age_years <- round(congress_age_subset$age_years, digits = 0)
+```
+Subsetting based on position
+```{r subset-data-house-senate}
+congress_age_house <- subset(congress_age_subset, chamber == "House", select = c('chamber','party_code','age_years','generation'))
+congress_age_subset$age_years <- round(congress_age_subset$age_years, digits = 0)
+congress_age_senate <- subset(congress_age_subset, chamber == "Senate", select = c('chamber','party_code','age_years','generation'))
+congress_age_subset$age_years <- round(congress_age_subset$age_years, digits = 0)
+```
+Subsetting based on party
+```{r subset-data-house-senate}
+congress_age_dem <- subset(congress_age_subset, party_code == "100", select = c('chamber','party_code','age_years','generation'))
+congress_age_subset$age_years <- round(congress_age_subset$age_years, digits = 0)
+congress_age_rep <- subset(congress_age_subset, party_code == "200", select = c('chamber','party_code','age_years','generation'))
+congress_age_subset$age_years <- round(congress_age_subset$age_years, digits = 0)
+congress_age_ind <- subset(congress_age_subset, party_code == "328", select = c('chamber','party_code','age_years','generation'))
+congress_age_subset$age_years <- round(congress_age_subset$age_years, digits = 0)
+```
+## Summarize the Data
+```{r summarize-data}
+glimpse(congress_age_subset)
+```
+```{r summarize-data-subset}
+summary(congress_age_subset)
+```
+```{r summarize-data-dem-rep-ind}
+summary(congress_age_dem)
+summary(congress_age_rep)
+summary(congress_age_ind)
+```
+```{r summarize-data-house-senate}
+summary(congress_age_house)
+summary(congress_age_senate)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Data Visualiztion
+```{r graph-generation-v-count}
+ggplot(data = congress_age_subset, aes(x = generation)) + 
+  geom_bar()
+```
+```{r graph-generation-v-count}
+ggplot(data = congress_age_subset, aes(x = age_years)) + 
+  geom_bar()
+```
+```{r graph-house}
+ggplot(data = congress_age_house, aes(x = age_years)) + 
+  geom_bar()
+```
+```{r graph-senate}
+ggplot(data = congress_age_senate, aes(x = age_years)) + 
+  geom_bar()
+```
+# Findings and Recommendations
+Analysis was done on finding the median and mean ages of congress members within the 118 congress based on party and position in office. It seems that across the board an overwhelming majority of congress is just under 60 years of age. 
+It would be interesting to do analysis and comparing the average age of congress members throughout at the year and see whether the mean age has been increasing, decreasing, or remaining the same. 
+
+
