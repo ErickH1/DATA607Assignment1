@@ -135,7 +135,8 @@ Graph of the Age distribution based on Independent
 ggplot(data = congress_age_ind, aes(x = age_years)) + 
   geom_bar()
 ```
-# Findings and Recommendations
+
+## Findings and Recommendations
 Analysis was done on finding the median and mean ages of congress members within the 118 congress based on party and position in office. It seems that across the board an overwhelming majority of congress is just under 60 years of age. 
 It would be interesting to do analysis and comparing the average age of congress members throughout at the year and see whether the mean age has been increasing, decreasing, or remaining the same. 
 
